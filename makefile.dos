@@ -1,0 +1,94 @@
+#
+# Makefile for DOS
+#
+# This makefile is set up for Microsoft C 5.1
+#
+
+#
+# Compact model lets us edit large files, but keep small model code
+#
+MODEL= /AC 
+CFLAGS = $(MODEL) /J
+
+LIBPATH = F:\LIB
+
+MACH=	dos.obj
+
+OBJ=	main.obj edit.obj linefunc.obj normal.obj cmdline.obj charset.obj \
+	mk.obj format_l.obj regexp.obj regsub.obj version.obj \
+	misccmds.obj help.obj dec.obj inc.obj search.obj alloc.obj \
+	s_io.obj mark.obj screen.obj fileio.obj param.obj $(MACH)
+
+all:	stevie.exe
+
+main.obj:	main.c
+	cl -c $(CFLAGS) main.c
+
+format_l.obj:	format_l.c
+	cl -c $(CFLAGS) format_l.c
+
+mk.obj:	mk.c
+	cl -c $(CFLAGS) mk.c
+
+regexp.obj:	regexp.c
+	cl -c $(CFLAGS) regexp.c
+
+regsub.obj:	regsub.c
+	cl -c $(CFLAGS) regsub.c
+
+version.obj:	version.c
+	cl -c $(CFLAGS) version.c
+
+alloc.obj : alloc.c
+	cl -c $(CFLAGS) alloc.c
+
+edit.obj : edit.c
+	cl -c $(CFLAGS) edit.c
+
+s_io.obj : s_io.c
+	cl -c $(CFLAGS) s_io.c
+
+linefunc.obj : linefunc.c
+	cl -c $(CFLAGS) linefunc.c
+
+normal.obj : normal.c
+	cl -c $(CFLAGS) normal.c
+
+cmdline.obj : cmdline.c
+	cl -c $(CFLAGS) cmdline.c
+
+charset.obj : charset.c
+	cl -c $(CFLAGS) charset.c
+
+misccmds.obj : misccmds.c
+	cl -c $(CFLAGS) misccmds.c
+
+help.obj : help.c
+	cl -c $(CFLAGS) help.c
+
+dec.obj : dec.c
+	cl -c $(CFLAGS) dec.c
+
+inc.obj : inc.c
+	cl -c $(CFLAGS) inc.c
+
+search.obj : search.c
+	cl -c $(CFLAGS) search.c
+
+mark.obj : mark.c
+	cl -c $(CFLAGS) mark.c
+
+screen.obj : screen.c
+	cl -c $(CFLAGS) screen.c
+
+fileio.obj : fileio.c
+	cl -c $(CFLAGS) fileio.c
+
+param.obj : param.c
+	cl -c $(CFLAGS) param.c
+
+dos.obj : dos.c
+	cl -c $(CFLAGS) dos.c
+
+stevie.exe : $(OBJ)
+	cl $(MODEL) *.obj $(LIBPATH)\setargv.obj -o stevie.exe /F 6000 /Lr -link /NOE

@@ -1,0 +1,37 @@
+#
+# Makefile for BSD 4.3 UNIX
+#
+
+CFLAGS = -O -DBSD
+#CFLAGS = -pg -g -DBSD
+LINTFLAGS = -DBSD
+
+MACHOBJ=	bsd.o
+MACHSRC=	bsd.c
+MACHSRC_H=	bsd.h
+
+OBJ=	main.o edit.o linefunc.o normal.o cmdline.o charset.o \
+	misccmds.o help.o dec.o inc.o search.o alloc.o \
+	format_l.o mk.o regexp.o regsub.o version.o \
+	s_io.o mark.o screen.o fileio.o param.o $(MACHOBJ)
+
+SRC=	main.c edit.c linefunc.c normal.c cmdline.c charset.c \
+	misccmds.c help.c dec.c inc.c search.c alloc.c \
+	format_l.c mk.c regexp.c regsub.c version.c \
+	s_io.c mark.c screen.c fileio.c param.c $(MACHSRC)
+
+SRC_H= 	ascii.h keymap.h macros.h param.h stevie.h term.h
+
+all: stevie
+
+stevie: $(OBJ) Makefile
+	$(CC) $(OBJ) $(CFLAGS) -o stevie
+
+lint:
+	lint $(LINTFLAGS) $(SRC)
+
+clean:
+	rm -f *.out *.o core stevie *.BAK
+
+tags: $(SRC) $(SRC_H) $(MACHSRC_H)
+	ctags -t $(SRC) $(SRC_H) $(MACHSRC_H)

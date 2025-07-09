@@ -1,0 +1,44 @@
+#
+# Makefile for SunOS 3.5 UNIX
+#
+
+CFLAGS = -O -DBSD
+#-I/usr/5include
+#CFLAGS = -pg -g -DBSD
+LINTFLAGS = -DBSD
+
+MACHOBJ=	bsd.o
+MACHSRC=	bsd.c
+
+SRC=	main.c edit.c linefunc.c normal.c cmdline.c charset.c \
+	misccmds.c help.c dec.c inc.c search.c alloc.c \
+	format_l.c mk.c regexp.c regsub.c version.c \
+	s_io.c mark.c screen.c fileio.c param.c $(MACHSRC)
+
+OBJ=	main.o edit.o linefunc.o normal.o cmdline.o charset.o \
+	misccmds.o help.o dec.o inc.o search.o alloc.o \
+	format_l.o mk.o regexp.o regsub.o version.o \
+	s_io.o mark.o screen.o fileio.o param.o $(MACHOBJ)
+
+all : stevie
+
+tags : $(SRC)
+	ctags $(SRC)
+
+index : $(SRC)
+	ctags -x $(SRC) >index
+
+flow : $(SRC)
+	cflow -DBSD $(SRC) >flow
+
+stevie : $(OBJ)
+	$(CC) $(OBJ) $(CFLAGS) -o stevie
+
+lint:
+	lint $(LINTFLAGS) $(SRC)
+
+clean :
+	rm -f *.out *.o core stevie *.BAK
+
+
+

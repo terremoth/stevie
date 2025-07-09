@@ -1,0 +1,29 @@
+#
+#
+#
+# Makefile for Mark Williams C
+#
+CFLAGS = -O -VPEEP 
+LDFLAGS = -s -x -v
+LINKER=ld
+
+OBJ1=	main.o edit.o linefunc.o normal.o cmdline.o charset.o \
+	format_l.o misccmds.o help.o dec.o inc.o 
+OBJ2=	alloc.o search.o mk.o regexp.o regsub.o version.o s_io.o \
+	mark.o screen.o fileio.o param.o tos.o
+
+SRC=	main.c edit.c linefunc.c normal.c cmdline.c charset.c \
+	format_l.c misccmds.c help.c dec.c inc.c search.c alloc.c \
+	mk.c regexp.c regsub.c version.c \
+	s_io.c mark.c screen.c fileio.c param.c \
+	tos.c
+
+
+all : stevie.ttp
+
+stevie.a: $(OBJ1) $(OBJ2)
+	ar rv stevie.a $(OBJ1)
+	ar rv stevie.a $(OBJ2)
+
+stevie.ttp:	stevie.a
+	cc stevie.a $(LIBS) -o stevie.ttp

@@ -1,0 +1,76 @@
+
+		 Release Notes for STEVIE - Version 3.31B
+
+			       Porting
+
+		     Tony Andrews -  March 6, 1988
+		    G. R. Walter -  January 6, 1988
+
+
+	Porting the editor is a relatively simple task. Most of the
+code is pretty machine-independent. For each environment, there is
+a file of routines that perform various low-level operations that
+tend to vary a lot from one machine to another. Another file contains
+the escape sequences to be used for each machine.
+
+Note however that 'char' is treated as unsigned so you need to set the
+appropriate compiler flags if this is not the default.
+
+	The machine-dependent files currently used are:
+
+tos.c:	 Atari ST - ifdef for either Megamax or Alcyon
+tos.h
+
+unix.c:	 UNIX System V
+unix.h
+
+os9.c:	 OS9 version 2.2
+os9.h
+
+os2.c:	 Microsoft OS/2
+os2.h
+
+dos.c:   MS DOS
+dos.h
+
+amiga.c: Amiga
+amiga.h
+
+bsd.c:   BSD 4.3 UNIX
+bsd.h
+
+	Each of these files are around 150 lines long and deal with
+low-level issues like character I/O to the terminal, terminal
+initialization, cursor addressing, and so on. There are different
+tradeoffs to be made depending on the environment. For example, the
+UNIX version buffers terminal output because of the relatively high
+overhead of system calls. A quick look at the files will make it clear
+what needs to be done in a new environment.
+
+	Terminal escape sequences are in the file "term.h". These are
+defined statically, for the time being. There is some discussion in
+term.h regarding which sequences are optional and which are not. The
+editor is somewhat flexible in dealing with a lack of terminal
+capabilities.
+
+	The character set is in the file "charset.c".
+
+	Because not all C compilers support command line macro definitions,
+the #define's for system-specific macros are placed in the file "env.h".
+If you port to a new system, add another line there to define the macro you
+choose for your port.
+
+	The basic process for doing a new port is:
+
+	1. Come up with a macro name to use when ifdef'ing your system-
+	   specific changes. Add a line to 'env.h' to define
+	   the macro name you've chosen.
+
+	2. Look at amiga.c, bsd.c, unix.c, tos.c, dos.c and os2.c and copy the
+	   one that comes closest to working on your system. Then modify your
+	   new file as needed.
+
+	3. Look at term.h and edit the file appropriately adding a new
+	   set of escape sequence definitions for your system.
+
+	4. Compiling and debug the editor.

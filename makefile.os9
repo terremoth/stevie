@@ -1,0 +1,50 @@
+
+
+.SUFFIXES : .r .a .c
+
+
+#
+# Makefile for OS9
+#
+
+MACHOBJ=	os9.r
+MACHSRC=	os9.c
+
+SRC=	main.c edit.c linefunc.c normal.c cmdline.c charset.c \
+	misccmds.c help.c dec.c inc.c search.c alloc.c \
+	format_l.c mk.c regexp.c regsub.c version.c \
+	s_io.c mark.c screen.c fileio.c param.c $(MACHSRC)
+
+OBJ=	main.r edit.r linefunc.r normal.r cmdline.r charset.r \
+	misccmds.r help.r dec.r inc.r search.r alloc.r \
+	format_l.r mk.r regexp.r regsub.r version.r \
+	s_io.r mark.r screen.r fileio.r param.r $(MACHOBJ)
+
+HOME=/usr2/joostv
+INCLUDE=$(HOME)/include
+HERE=.
+
+#OS9BIN =  /usr2/car/TAPE_68020/mw2.2/CrossC20/Sun3/bin/
+#CLIB = /usr2/car/TAPE_68020/mw2.2/CrossC20/Sun3/lib
+#CDEF = /usr2/car/TAPE_68020/mw2.2/CrossC20/Sun3/defs
+
+# debug option to add : -g
+DEBUG = 
+
+CC=cc68 -q -s -DUNIX -DOS9 -v=$(HERE) -v=$(CDEF) $(DEBUG)
+
+.c.a:
+	$(CC) -ac $*.c 
+
+.c.r:
+	$(CC) -r $*.c
+
+all : stevie
+
+stevie : $(OBJ)
+	$(CC) $(OBJ) $(CFLAGS) -F=stevie
+
+clean :
+	rm -f *.r *.stb *.dbg stevie
+
+
