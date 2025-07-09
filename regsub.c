@@ -48,6 +48,7 @@ overlay "regexp"
 #include <stdio.h>
 #include "regexp.h"
 #include "regmagic.h"
+#include <string.h>
 
 #ifndef CHARBITS
 #define UCHARAT(p)      ((int)*(unsigned char *)(p))
@@ -58,18 +59,12 @@ overlay "regexp"
 /*
  - regsub - perform substitutions after a regexp match
  */
-void
-regsub(prog, source, dest)
-    regexp         *prog;
-    char           *source;
-    char           *dest;
-{
+void regsub(regexp *prog, char *source, char *dest) {
     register char  *src;
     register char  *dst;
     register char   c;
     register int    no;
     register int    len;
-    extern char    *strncpy();
 
     if (prog == NULL || source == NULL || dest == NULL) {
 	regerror("NULL parm to regsub");

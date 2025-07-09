@@ -17,8 +17,7 @@ extern int      did_ai;
  */
 
 bool_t
-OpenForward(can_ai)
-    int             can_ai;
+OpenForward(int can_ai)
 {
     LINE           *l;
     LPtr           *next;
@@ -110,14 +109,10 @@ OpenForward(can_ai)
  * Add a blank line above the current line. 
  */
 
-bool_t
-OpenBackward(can_ai)
-    int             can_ai;
-{
-    LINE           *l;
-    LINE           *prev;
-    int             newindex = 0;	/* index of the cursor on the new
-					 * line */
+bool_t OpenBackward(int can_ai) {
+    LINE *l;
+    LINE *prev;
+    int newindex = 0;	/* index of the cursor on the new  * line */
 
     prev = Curschar->linep->prev;
 
@@ -170,10 +165,7 @@ OpenBackward(can_ai)
     return (TRUE);
 }
 
-int
-cntllines(pbegin, pend)
-    LPtr           *pbegin, *pend;
-{
+int cntllines(LPtr *pbegin, LPtr *pend) {
     register LINE  *lp;
     register int    lnum = 1;
 
@@ -188,10 +180,7 @@ cntllines(pbegin, pend)
  *             line pointed to by 's'
  */
 
-int
-plines(s)
-    register char  *s;
-{
+int plines(register char  *s) {
     register int    col = 0;
 
     if (*s == NUL)		/* empty line */
@@ -241,10 +230,7 @@ fileinfo()
  * Returns a pointer to the last line of the file if n is zero, or beyond the
  * end of the file. 
  */
-LPtr           *
-gotoline(n)
-    int             n;
-{
+LPtr *gotoline(int n) {
     static LPtr     l;
 
     l.index = 0;
@@ -262,8 +248,7 @@ gotoline(n)
 }
 
 void
-inschar(c)
-    char            c;
+inschar(char c)
 {
     register char  *p;
     register char  *pend;
@@ -317,8 +302,7 @@ inschar(c)
 }
 
 void
-insstr(s)
-    register char  *s;
+insstr(register char  *s)
 {
     register char  *p;
     register char  *pend;
@@ -343,9 +327,9 @@ insstr(s)
 }
 
 bool_t
-delchar(fixpos, undo)
-    bool_t          fixpos;	/* if TRUE fix the cursor position when done */
-    bool_t          undo;	/* if TRUE put char deleted into Undo buffer */
+delchar(bool_t fixpos, bool_t undo)
+/* if TRUE fix the cursor position when done */
+/* if TRUE put char deleted into Undo buffer */
 {
     int             i;
 
@@ -375,10 +359,7 @@ delchar(fixpos, undo)
     return TRUE;
 }
 
-void
-delline(nlines)
-    int             nlines;
-{
+void delline(int nlines) {
     register LINE  *p;
     register LINE  *q;
 

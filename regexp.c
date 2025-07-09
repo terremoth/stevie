@@ -52,7 +52,8 @@ overlay "regexp"
 #include <stdio.h>
 #include "regexp.h"
 #include "regmagic.h"
-
+#include <string.h>
+#include <stdlib.h>
 /*
  * The "internal use only" fields in regexp.h are present to pass info from
  * compile to execute that permits the execute phase to run lots faster on
@@ -189,6 +190,8 @@ int             reg_ic = 0;	/* set by callers to ignore case */
 
 #endif
 
+int cstrncmp(const char *s1, const char *s2, int n);
+
 /*
  * Global work variables for regcomp().
  */
@@ -204,16 +207,16 @@ static long     regsize;	/* Code size. */
 #ifndef STATIC
 #define STATIC  static
 #endif
-STATIC char    *reg();
-STATIC char    *regbranch();
-STATIC char    *regpiece();
-STATIC char    *regatom();
-STATIC char    *regnode();
-STATIC char    *regnext();
-STATIC void     regc();
-STATIC void     reginsert();
-STATIC void     regtail();
-STATIC void     regoptail();
+STATIC char    *reg(int, int*);
+STATIC char    *regbranch(int *);
+STATIC char    *regpiece(int *);
+STATIC char    *regatom(int *);
+STATIC char    *regnode(char);
+STATIC char    *regnext(register char *);
+STATIC void     regc(char);
+STATIC void     reginsert(char op, char *);
+STATIC void     regtail(char *, char *);
+STATIC void     regoptail(char *, char *);
 #ifdef STRCSPN
 STATIC int      strcspn();
 #endif
@@ -233,17 +236,14 @@ STATIC int      strcspn();
  * Beware that the optimization-preparation code in here knows about some
  * of the structure of the compiled regexp.
  */
-regexp         *
-regcomp(exp)
-    char           *exp;
-{
+regexp *regcomp(char *exp) {
     register regexp *r;
     register char  *scan;
     register char  *longest;
     register int    len;
     int             flags;
 /*  extern char    *malloc();*/
-    extern char    *alloc();
+    extern char    *alloc(unsigned);
 
     if (exp == NULL)
 	FAIL("NULL argument");
@@ -322,11 +322,7 @@ regcomp(exp)
  * is a trifle forced, but the need to tie the tails of the branches to what
  * follows makes it hard to avoid.
  */
-static char    *
-reg(paren, flagp)
-    int             paren;	/* Parenthesized? */
-    int            *flagp;
-{
+static char *reg(int paren/* Parenthesized? */, int *flagp) {
     register char  *ret;
     register char  *br;
     register char  *ender;
@@ -393,10 +389,7 @@ reg(paren, flagp)
  *
  * Implements the concatenation operator.
  */
-static char    *
-regbranch(flagp)
-    int            *flagp;
-{
+static char *regbranch(int *flagp) {
     register char  *ret;
     register char  *chain;
     register char  *latest;
@@ -432,10 +425,7 @@ regbranch(flagp)
  * It might seem that this node could be dispensed with entirely, but the
  * endmarker role is not redundant.
  */
-static char    *
-regpiece(flagp)
-    int            *flagp;
-{
+static char *regpiece(int *flagp) {
     register char  *ret;
     register char   op;
     register char  *next;
@@ -495,10 +485,7 @@ regpiece(flagp)
  * faster to run.  Backslashed characters are exceptions, each becoming a
  * separate node; the code is simpler that way and it's not worth fixing.
  */
-static char    *
-regatom(flagp)
-    int            *flagp;
-{
+static char *regatom(int *flagp) {
     register char  *ret;
     int             flags;
 
@@ -604,10 +591,7 @@ regatom(flagp)
 /*
  - regnode - emit a node
  */
-static char    *		/* Location. */
-regnode(op)
-    char            op;
-{
+static char * /* Location. */regnode(char op) {
     register char  *ret;
     register char  *ptr;
 
@@ -628,10 +612,7 @@ regnode(op)
 /*
  - regc - emit (if appropriate) a byte of code
  */
-static void
-regc(b)
-    char            b;
-{
+static void regc(char b) {
     if (regcode != &regdummy)
 	*regcode++ = b;
     else
@@ -644,10 +625,7 @@ regc(b)
  * Means relocating the operand.
  */
 static void
-reginsert(op, opnd)
-    char            op;
-    char           *opnd;
-{
+reginsert(char op, char *opnd) {
     register char  *src;
     register char  *dst;
     register char  *place;
@@ -671,11 +649,7 @@ reginsert(op, opnd)
 /*
  - regtail - set the next-pointer at the end of a node chain
  */
-static void
-regtail(p, val)
-    char           *p;
-    char           *val;
-{
+static void regtail(char *p, char *val) {
     register char  *scan;
     register char  *temp;
     register int    offset;
@@ -703,11 +677,7 @@ regtail(p, val)
 /*
  - regoptail - regtail on operand of first argument; nop if operandless
  */
-static void
-regoptail(p, val)
-    char           *p;
-    char           *val;
-{
+static void regoptail(char *p, char *val){
     /* "Operandless" and "op != BRANCH" are synonymous in practice. */
     if (p == NULL || p == &regdummy || OP(p) != BRANCH)
 	return;
@@ -729,9 +699,9 @@ static char   **regendp;	/* Ditto for endp. */
 /*
  * Forwards.
  */
-STATIC int      regtry();
-STATIC int      regmatch();
-STATIC int      regrepeat();
+STATIC int      regtry(regexp *, char *);
+STATIC int      regmatch(char *);
+STATIC int      regrepeat(char *);
 
 #ifdef DEBUG
 int             regnarrate = 0;
@@ -742,14 +712,9 @@ STATIC char    *regprop();
 /*
  - regexec - match a regexp against a string
  */
-int
-regexec(prog, string, at_bol)
-    register regexp *prog;
-    register char  *string;
-    int             at_bol;
-{
+int regexec(register regexp *prog, register char  *string, int at_bol) {
     register char  *s;
-    extern char    *cstrchr();
+    extern char    *cstrchr(char *, char);
 
     /* Be paranoid... */
     if (prog == NULL || string == NULL) {
@@ -805,11 +770,7 @@ regexec(prog, string, at_bol)
 /*
  - regtry - try match at specific point
  */
-static int			/* 0 failure, 1 success */
-regtry(prog, string)
-    regexp         *prog;
-    char           *string;
-{
+static int /* 0 failure, 1 success */regtry(regexp *prog, char *string) {
     register int    i;
     register char **sp;
     register char **ep;
@@ -842,13 +803,9 @@ regtry(prog, string)
  * need to know whether the rest of the match failed) by a loop instead of
  * by recursion.
  */
-static int			/* 0 failure, 1 success */
-regmatch(prog)
-    char           *prog;
-{
+static int /* 0 failure, 1 success */regmatch(char *prog) {
     register char  *scan;	/* Current node. */
     char           *next;	/* Next node. */
-    extern char    *strchr();
 
     scan = prog;
 #ifdef DEBUG
@@ -1028,10 +985,7 @@ regmatch(prog)
 /*
  - regrepeat - repeatedly match something simple, report how many
  */
-static int
-regrepeat(p)
-    char           *p;
-{
+static int regrepeat(char *p) {
     register int    count = 0;
     register char  *scan;
     register char  *opnd;
@@ -1074,10 +1028,7 @@ regrepeat(p)
 /*
  - regnext - dig the "next" pointer out of a node
  */
-static char    *
-regnext(p)
-    register char  *p;
-{
+static char *regnext(register char *p) {
     register int    offset;
 
     if (p == &regdummy)
@@ -1107,7 +1058,6 @@ regdump(r)
     register char  *s;
     register char   op = EXACTLY;	/* Arbitrary non-END op. */
     register char  *next;
-    extern char    *strchr();
 
 
     s = r->program + 1;
@@ -1256,12 +1206,8 @@ strcspn(s1, s2)
 }
 #endif
 
-int
-cstrncmp(s1, s2, n)
-    char           *s1, *s2;
-    int             n;
-{
-    char           *p, *S1, *S2, *strsave();
+int cstrncmp(const char *s1, const char *s2, int n) {
+    char           *p, *S1, *S2, *strsave(const char *s);
     int             rval;
 
     if (!reg_ic)
@@ -1286,11 +1232,7 @@ cstrncmp(s1, s2, n)
     return rval;
 }
 
-char           *
-cstrchr(s, c)
-    char           *s;
-    char            c;
-{
+char *cstrchr(char *s, char c) {
     char           *p;
 
     for (p = s; *p; p++) {

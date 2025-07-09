@@ -7,6 +7,8 @@
  */
 
 #include "stevie.h"
+#include "dos.h"
+#include "term.h"
 
 static char    *altfile = NULL;	/* alternate file */
 static int      altline;	/* line # in alternate file */
@@ -31,11 +33,11 @@ static LPtr     l_pos, u_pos;
 
 static bool_t   interactive;	/* TRUE if we're reading a real command line */
 
-static bool_t   doecmd();
+static bool_t   doecmd(char *);
 static void     badcmd();
 static void     doshell();
-static void     get_range();
-static LPtr    *get_line();
+static void     get_range(char **);
+static LPtr    *get_line(char **);
 
 #ifdef  MEGAMAX
 overlay "cmdline"
@@ -50,11 +52,9 @@ overlay "cmdline"
  * main() to handle initialization commands in the environment variable
  * "EXINIT". 
  */
-void
-readcmdline(firstc, cmdline)
-    char            firstc;	/* either ':', '/', or '?' */
-    char           *cmdline;	/* optional command string */
-{
+/* either ':', '/', or '?' */
+/* optional command string */
+void readcmdline(char firstc, char *cmdline) {
     char            c;
     char            buff[CMDBUFFSIZE];
     char            cmdbuf[CMDBUFFSIZE];
@@ -488,10 +488,7 @@ readcmdline(firstc, cmdline)
  * range spec. If an initial address is found, but no second, the upper bound
  * is equal to the lower. 
  */
-static void
-get_range(cp)
-    char          **cp;
-{
+static void get_range(char **cp) {
     LPtr           *l;
     char           *p;
 
@@ -525,10 +522,7 @@ get_range(cp)
     u_pos = *l;
 }
 
-static LPtr    *
-get_line(cp)
-    char          **cp;
-{
+static LPtr *get_line(char **cp) {
     static LPtr     pos;
     LPtr           *lp;
     char           *p, c;
@@ -609,12 +603,8 @@ badcmd()
 /*
  * dotag(tag, force) - goto tag 
  */
-void
-dotag(tag, force)
-    char           *tag;
-    bool_t          force;
-{
-    FILE           *tp, *fopen();
+void dotag(char *tag, bool_t force) {
+    FILE           *tp;
     char            lbuf[LSIZE];
     char           *fname, *str;
 
@@ -651,10 +641,7 @@ dotag(tag, force)
     fclose(tp);
 }
 
-static          bool_t
-doecmd(arg)
-    char           *arg;
-{
+static bool_t doecmd(char *arg) {
     int             line = 1;	/* line # to go to in new file */
 
     if (arg != NULL) {
@@ -722,7 +709,7 @@ DO_THE_STUFF_THING:
 static void
 doshell()
 {
-    char           *sh, *getenv();
+    char           *sh;
 
     sh = getenv("SHELL");
     if (sh == NULL) {
@@ -738,11 +725,7 @@ doshell()
     wait_return();
 }
 
-void
-gotocmdline(clr, firstc)
-    bool_t          clr;
-    char            firstc;
-{
+void gotocmdline(bool_t clr, char firstc) {
     windgoto(Rows - 1, 0);
     if (clr)
 	outstr(T_EL);		/* clear the bottom line */
@@ -753,10 +736,7 @@ gotocmdline(clr, firstc)
 /*
  * msg(s) - displays the string 's' on the status line 
  */
-void
-msg(s)
-    char           *s;
-{
+void msg(char *s) {
     gotocmdline(YES, NUL);
     outstr(s);
 #ifdef AMIGA
@@ -768,14 +748,12 @@ msg(s)
 }
 
 /* VARARGS */
-void
-smsg(s, a1, a2, a3, a4, a5, a6, a7, a8, a9)
-    char           *s;
-    int             a1, a2, a3, a4, a5, a6, a7, a8, a9;
-{
-    char            sbuf[MAX_COLUMNS + 1];
-
-    sprintf(sbuf, s, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+void smsg(const char *fmt, ...) {
+    char sbuf[MAX_COLUMNS + 1];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(sbuf, sizeof(sbuf), fmt, args);
+    va_end(args);
     msg(sbuf);
 }
 
@@ -784,10 +762,7 @@ smsg(s, a1, a2, a3, a4, a5, a6, a7, a8, a9)
  *
  * Rings the bell, if appropriate, and calls message() to do the real work 
  */
-void
-emsg(s)
-    char           *s;
-{
+void emsg(char *s) {
     UndoInProgress = FALSE;
     RedrawingDisabled = FALSE;
 
@@ -804,14 +779,11 @@ emsg(s)
 #endif
 }
 
-void
-wait_return()
-{
-    char            c;
-
+void wait_return() {
+    char c;
     outstr("Press RETURN to continue");
     do {
-	c = vgetc();
+		c = vgetc();
     } while (c != '\r' && c != '\n');
 
     s_clear();

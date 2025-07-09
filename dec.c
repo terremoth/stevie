@@ -15,8 +15,7 @@
  * 1 when crossing a line, -1 when at start of file, 0 otherwise. 
  */
 int
-dec(lp)
-    register LPtr  *lp;
+dec(register LPtr  *lp)
 {
     if (lp->index > 0) {	/* still within line */
 	lp->index--;

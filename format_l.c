@@ -10,11 +10,7 @@
 
 char           *tab_expand = "                ";
 
-char           *
-format_line(ptr, len)
-    register char  *ptr;
-    int            *len;
-{
+char *format_line(register char  *ptr, int *len) {
     register char  *dest;
     register char   c;
     register int    col;

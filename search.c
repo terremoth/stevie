@@ -293,10 +293,7 @@ ssearch(dir, str)
     return pos;
 }
 
-bool_t
-dosearch(dir, str)
-    int             dir;
-    char           *str;
+bool_t dosearch(int dir, char *str)
 {
     LPtr           *p;
 
@@ -317,10 +314,7 @@ dosearch(dir, str)
     }
 }
 
-void
-searchagain(dir)
-    int             dir;
-{
+void searchagain(int dir) {
     if (laststr == NULL)
 	beep();
     else
@@ -331,10 +325,7 @@ searchagain(dir)
 
 #define OTHERDIR(x)     (((x) == FORWARD) ? BACKWARD : FORWARD)
 
-bool_t
-repsearch(flag)
-    bool_t          flag;
-{
+bool_t repsearch(bool_t flag) {
     int             dir = lastsdir;
     bool_t          found;
 
@@ -357,10 +348,7 @@ repsearch(flag)
 /*
  * regerror - called by regexp routines when errors are detected. 
  */
-void
-regerror(s)
-    char           *s;
-{
+void regerror(char *s) {
     emsg(s);
 }
 
@@ -377,11 +365,7 @@ regerror(s)
  * The usual escapes are supported as described in the regexp docs.
  */
 
-void
-dosub(lp, up, cmd)
-    LPtr           *lp, *up;
-    char           *cmd;
-{
+void dosub(LPtr *lp, LPtr *up, char *cmd) {
     LINE           *cp;
     char           *pat, *sub;
     regexp         *prog;
@@ -538,11 +522,7 @@ dosub(lp, up, cmd)
  * is assumed to be 'p' if missing.
  */
 
-void
-doglob(lp, up, cmd)
-    LPtr           *lp, *up;
-    char           *cmd;
-{
+void doglob(LPtr *lp, LPtr *up, char *cmd) {
     LINE           *cp;
 
     char           *pat;
@@ -679,12 +659,7 @@ static int      lastctype;	/* last type of search ("find" or "to") */
  * Search for character 'c', in direction 'dir'. If type is 0, move to the
  * position of the character, otherwise move to just before the char. 
  */
-bool_t
-searchc(c, dir, type)
-    char            c;
-    int             dir;
-    int             type;
-{
+bool_t searchc(char c, int dir, int type) {
     LPtr            save;
 
     save = *Curschar;		/* save position in case we fail */
@@ -710,10 +685,7 @@ searchc(c, dir, type)
     return FALSE;
 }
 
-bool_t
-crepsearch(flag)
-    int             flag;
-{
+bool_t crepsearch(int flag) {
     int             dir = lastcdir;
     int             rval;
 
@@ -738,7 +710,7 @@ LPtr           *
 showmatch()
 {
     static LPtr     pos;
-    int             (*move) (), inc(), dec();
+    int (*move)(LPtr *), (*inc)(LPtr *), (*dec)(LPtr *);
     char            initc = gchar(Curschar);	/* initial char */
     char            findc;	/* terminating char */
     char            c;
@@ -794,10 +766,7 @@ showmatch()
  *
  * Return TRUE if a function was found. 
  */
-bool_t
-findfunc(dir)
-    int             dir;
-{
+bool_t findfunc(int dir) {
     LPtr           *curr;
 
     S_CHECK_TOPCHAR_AND_BOTCHAR;
@@ -865,11 +834,7 @@ cls(c)
  *
  * Returns the resulting position, or NULL if EOF was reached. 
  */
-LPtr           *
-fwd_word(p, type)
-    LPtr           *p;
-    int             type;
-{
+LPtr *fwd_word(LPtr *p, int type) {
     static LPtr     pos;
     int             sclass = cls(gchar(p));	/* starting class */
 
@@ -917,11 +882,7 @@ fwd_word(p, type)
  *
  * Returns the resulting position, or NULL if top-of-file was reached. 
  */
-LPtr           *
-bck_word(p, type)
-    LPtr           *p;
-    int             type;
-{
+LPtr *bck_word(LPtr *p, int type) {
     static LPtr     pos;
     int             sclass = cls(gchar(p));	/* starting class */
 
@@ -991,11 +952,7 @@ bck_word(p, type)
  *
  * Returns the resulting position, or NULL if EOF was reached. 
  */
-LPtr           *
-end_word(p, type)
-    LPtr           *p;
-    int             type;
-{
+LPtr *end_word(LPtr *p, int type) {
     static LPtr     pos;
     int             sclass = cls(gchar(p));	/* starting class */
 

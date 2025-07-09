@@ -117,3 +117,5 @@
 #define T_TP    ""		/* plain text */
 #define T_TI    ""		/* inverse-video text */
 #endif
+
+#define DOS

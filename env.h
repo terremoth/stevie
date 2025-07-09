@@ -39,7 +39,7 @@
  * If ATARI is defined, one of the following compilers must be selected. 
  */
 #ifdef	ATARI
-#define MWC			Mark William's C 3.0.9 */
+#define MWC			/* Mark William's C 3.0.9 */
 /* #define	MEGAMAX		Megamax Compiler */
 /* #define	ALCYON		Alcyon C compiler */
 

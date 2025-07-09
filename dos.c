@@ -9,7 +9,12 @@
 
 #include <dos.h>
 #include "stevie.h"
+#include <conio.h>
 
+#ifdef __MINGW32__
+#define union
+#define int86(a,b,c) ((void)0)
+#endif
 /*
  * inchar() - get a character from the keyboard
  */
@@ -110,7 +115,7 @@ inchar()
 static char     outbuf[BSIZE];
 static int      bpos = 0;
 
-flushbuf()
+void flushbuf()
 {
     if (bpos != 0)
 	write(1, outbuf, bpos);
@@ -126,8 +131,7 @@ flushbuf()
  * Function version for use outside this file.
  */
 void
-outchar(c)
-    register char   c;
+outchar(register char c)
 {
     outbuf[bpos++] = c;
     if (bpos >= BSIZE)
@@ -138,59 +142,53 @@ outchar(c)
 /*
  * outstr(s) - write a string to the console
  */
-void
-outstr(s)
-    register char  *s;
-{
-    if (strcmp(s, T_DL) == 0) {	/* delete line */
-	union REGS      rr;
+void outstr(register char  *s) {
+    // if (strcmp(s, T_DL) == 0) {	/* delete line */
+	// union REGS      rr;
 
-	flushbuf();
-	rr.x.ax = 0x0300;	/* get cursor position */
-	rr.x.bx = 0;
-	int86(0x10, &rr, &rr);
-	rr.h.ch = rr.h.dh;	/* scroll from current row to bot dn 1 */
-	rr.h.cl = rr.h.dl;
-	rr.h.dh = Rows - rr.h.ch;
-	rr.h.dl = Columns;
-	rr.x.bx = 07;
-	rr.x.ax = 0x0601;
-	int86(0x10, &rr, &rr);
-	return;
-    }
-    if (strcmp(s, T_IL) == 0) {	/* insert line */
-	union REGS      rr;
+	// flushbuf();
+	// rr.x.ax = 0x0300;	/* get cursor position */
+	// rr.x.bx = 0;
+	// int86(0x10, &rr, &rr);
+	// rr.h.ch = rr.h.dh;	/* scroll from current row to bot dn 1 */
+	// rr.h.cl = rr.h.dl;
+	// rr.h.dh = Rows - rr.h.ch;
+	// rr.h.dl = Columns;
+	// rr.x.bx = 07;
+	// rr.x.ax = 0x0601;
+	// int86(0x10, &rr, &rr);
+	// return;
+    // }
+    // if (strcmp(s, T_IL) == 0) {	/* insert line */
+	// union REGS      rr;
 
-	flushbuf();
-	rr.x.ax = 0x0300;	/* get cursor position */
-	rr.x.bx = 0;
-	int86(0x10, &rr, &rr);
-	rr.h.ch = rr.h.dh;	/* scroll from current row to bot dn 1 */
-	rr.h.cl = rr.h.dl;
-	rr.h.dh = Rows - rr.h.ch;
-	rr.h.dl = Columns;
-	rr.x.bx = 07;
-	rr.x.ax = 0x0701;
-	int86(0x10, &rr, &rr);
-	return;
-    }
+	// flushbuf();
+	// rr.x.ax = 0x0300;	/* get cursor position */
+	// rr.x.bx = 0;
+	// int86(0x10, &rr, &rr);
+	// rr.h.ch = rr.h.dh;	/* scroll from current row to bot dn 1 */
+	// rr.h.cl = rr.h.dl;
+	// rr.h.dh = Rows - rr.h.ch;
+	// rr.h.dl = Columns;
+	// rr.x.bx = 07;
+	// rr.x.ax = 0x0701;
+	// int86(0x10, &rr, &rr);
+	// return;
+    // }
     while (*s) {
 	outone(*s++);
     }
 }
 
-void
-beep()
-{
+void beep() {
     if (RedrawingDisabled)
-	return;
+		return;
 
     outone('\007');
 }
 
 void
-sleep(n)
-    int             n;
+sleep(int n)
 {
     /*
      * Should do something reasonable here. 
@@ -224,27 +222,14 @@ windexit(r)
     exit(r);
 }
 
-void
-windgoto(r, c)
-    register int    r, c;
-{
-    union REGS      rr;
-
+void windgoto(register int r, register int c) {
     flushbuf();
-    rr.h.dh = r;
-    rr.h.dl = c;
-    rr.x.bx = 0;
-    rr.x.ax = 0x0200;
-    int86(0x10, &rr, &rr);
+    printf("\033[%d;%dH", r + 1, c + 1);  // ANSI escape: cursor to row r+1, col c+1
+    fflush(stdout);
 }
 
-FILE           *
-fopenb(fname, mode)
-    char           *fname;
-    char           *mode;
-{
-    FILE           *fopen();
-    char            modestr[16];
+FILE * fopenb(char *fname, char *mode) {
+    char modestr[16];
 
     sprintf(modestr, "%sb", mode);
     return fopen(fname, modestr);

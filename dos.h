@@ -5,11 +5,11 @@
 void flushbuf();
 
 int  inchar();
-void outchar();
-void outstr();
+void outchar(register char);
+void outstr(register char *);
 void beep();
 void windinit();
-void windexit();
-void windgoto();
+void windexit(int r);
+void windgoto(register int, register int);
 void delay();
-void sleep();
+void sleep(int);

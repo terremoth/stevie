@@ -11,7 +11,7 @@
 #endif
 
 #include "stevie.h"
-
+#include "dos.h"
 #ifdef AMIGA
 int             Aux_Device = FALSE;
 #endif
@@ -128,17 +128,15 @@ void
 #else
 int
 #endif
-main(argc, argv)
-    int             argc;
-    char          **argv;
+main(int argc, char **argv)
 {
     char           *initstr;	/* init string from the environment */
     char           *tag = NULL;	/* tag from command line */
     char           *pat = NULL;	/* pattern from command line */
     int             line = -1;	/* line number from command line */
 
-    int             atoi();
-    char           *getenv();
+    int             atoi(const char *);
+    //char           *getenv();
 
 #ifdef AMIGA
     {
@@ -300,8 +298,7 @@ main(argc, argv)
 }
 
 void
-stuffReadbuff(s)
-    char           *s;
+stuffReadbuff(char *s)
 {
     if (Readbuffptr == NULL) {
 	if ((strlen(s) + 1) < READSIZE) {
@@ -319,8 +316,7 @@ stuffReadbuff(s)
 }
 
 void
-stuffnumReadbuff(n)
-    int             n;
+stuffnumReadbuff(int n)
 {
     char            buf[32];
 

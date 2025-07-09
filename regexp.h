@@ -26,10 +26,10 @@ typedef struct regexp {
     char            program[1];	/* Unwarranted chumminess with compiler. */
 }               regexp;
 
-extern regexp  *regcomp();
-extern int      regexec();
-extern void     regsub();
-extern void     regerror();
+extern regexp  *regcomp(char *);
+extern int      regexec(register regexp *, register char  *, int);
+extern void     regsub(regexp *, char *, char *);
+extern void     regerror(char *);
 
 #ifndef	ORIGINAL
 extern int      reg_ic;		/* set non-zero to ignore case in searches */

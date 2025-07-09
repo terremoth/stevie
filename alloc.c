@@ -18,34 +18,29 @@
  * deallocation of data structures. 
  */
 
-char           *
-alloc(size)
-    unsigned        size;
-{
-    char           *p;		/* pointer to new storage space */
+char *alloc(unsigned size) {
+    char *p;  // pointer to new storage space
 
     p = malloc(size);
-    if (p == (char *) NULL) {	/* if there is no more room... */
-	emsg("alloc() is unable to find memory!");
-	sleep(5);
+    if (p == NULL) {  // no need to cast malloc in C
+        emsg("alloc() is unable to find memory!");
+        sleep(5);
     }
+
 #ifdef AMIGA
     if (AvailMem(MEMF_CHIP) < PANIC_FACTOR_CHIP) {
-	free(p);
-	p = (char *) NULL;
-	emsg("alloc() - not enough CHIP memory!");
-	sleep(5);
+        free(p);
+        p = NULL;
+        emsg("alloc() - not enough CHIP memory!");
+        sleep(5);
     }
 #endif
 
-    return (p);
+    return p;
 }
 
-char           *
-strsave(string)
-    char           *string;
-{
-    char           *s;
+char *strsave(const char *string) {
+    char *s;
 
     s = alloc((unsigned) (strlen(string) + 1));
     if (s != (char *) NULL)
@@ -83,10 +78,7 @@ screenalloc()
  * Allocate and initialize a new line structure with room for 'nchars'
  * characters. 
  */
-LINE           *
-newline(nchars)
-    int             nchars;
-{
+LINE *newline(int nchars) {
     register LINE  *l;
 
     if (nchars == 0)
@@ -184,10 +176,7 @@ freeall()
  * it attempts to allocate the space and adjust the data structures
  * accordingly. If everything fails it returns FALSE. 
  */
-bool_t
-canincrease(n)
-    register int    n;
-{
+bool_t canincrease(register int n) {
     register int    nsize;
     register char  *s;		/* pointer to new space */
 

@@ -7,7 +7,7 @@
  */
 
 #include "stevie.h"
-
+#include "dos.h"
 /*
  * This flag is used to make auto-indent work right on lines where only a
  * <RETURN> or <ESC> is typed. It is set when an auto-indent is done, and
@@ -226,8 +226,7 @@ edit()
 #define ISSPECIAL(c)    ((c) == BS || (c) == NL || (c) == CR || (c) == ESC)
 
 void
-insertchar(c)
-    char            c;
+insertchar(char c)
 {
     /*
      * If there's any pending input, grab up to MAX_COLUMNS at once. 
@@ -258,8 +257,7 @@ insertchar(c)
 }
 
 void
-getout(r)
-    int             r;
+getout(int r)
 {
     windgoto(Rows - 1, 0);
     outchar('\r');
@@ -268,8 +266,7 @@ getout(r)
 }
 
 void
-scrolldown(nlines)
-    int             nlines;
+scrolldown(int nlines)
 {
     register LPtr  *p;
 
@@ -290,8 +287,7 @@ scrolldown(nlines)
 }
 
 void
-scrollup(nlines)
-    int             nlines;
+scrollup(int nlines)
 {
     register LPtr  *p;
 
@@ -358,20 +354,16 @@ oneleft()
     return FALSE;		/* PARANOIA: should never reach here */
 }
 
-void
-beginline(flag)
-    bool_t          flag;
-{
+void beginline(bool_t flag) {
     while (oneleft());
     if (flag) {
-	while (isspace(gchar(Curschar)) && oneright());
+		while (isspace(gchar(Curschar)) && oneright());
     }
     set_want_col = TRUE;
 }
 
 bool_t
-oneup(n)
-    register int    n;
+oneup(register int n)
 {
     register int    k;
 
@@ -394,8 +386,7 @@ oneup(n)
 }
 
 bool_t
-onedown(n)
-    register int    n;
+onedown(register int n)
 {
     register int    k;
 

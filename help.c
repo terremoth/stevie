@@ -7,6 +7,7 @@
  */
 
 #include "stevie.h"
+#include "term.h"
 
 extern char    *Version;
 
@@ -18,11 +19,9 @@ static int      helprow;
 overlay "help"
 #endif
 
-static void     longline();
+static void longline(char *);
 
-bool_t
-help()
-{
+bool_t help() {
     outstr(T_ED);
     windgoto(helprow = 0, 0);
 
@@ -280,10 +279,7 @@ X\t\t... before cursor\n\
     return TRUE;
 }
 
-static void
-longline(p)
-    char           *p;
-{
+static void longline(char *p) {
 # ifdef AMIGA
     outstr(p);
 # else

@@ -69,8 +69,7 @@ updateline()
 }
 
 void
-cursupdate(type)
-    int             type;
+cursupdate(int type)
 {
     register char   c;
     register int    incr;

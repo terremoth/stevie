@@ -9,8 +9,7 @@
 #include "stevie.h"
 
 char           *
-mkline(n)
-    int             n;
+mkline(int n)
 {
     static char     lbuf[9];
     int             i = 6;
@@ -38,8 +37,7 @@ mkline(n)
 }
 
 char           *
-mkstr(c)
-    char            c;
+mkstr(char c)
 {
     static char     s[2];
 

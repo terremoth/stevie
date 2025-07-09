@@ -1,0 +1,15 @@
+CC = gcc
+CFLAGS = -O2 -Wall -DWIN32 -DDOS
+
+OBJ = main.o edit.o linefunc.o normal.o cmdline.o charset.o mk.o format_l.o regexp.o regsub.o version.o misccmds.o help.o dec.o inc.o search.o mark.o screen.o fileio.o param.o dos.o alloc.o s_io.o
+
+all: stevie.exe
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+stevie.exe: $(OBJ)
+	$(CC) -o stevie.exe $(OBJ)
+
+clean:
+	rm -f *.o stevie.exe

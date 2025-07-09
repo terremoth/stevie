@@ -23,6 +23,7 @@
 #include "param.h"
 #include "term.h"
 #include "macros.h"
+#include <stdarg.h>
 
 #ifdef AMIGA
 /*
@@ -31,7 +32,6 @@
 #include <signal.h>
 #endif
 
-extern char    *strchr();
 
 #define NORMAL			 0
 #define CMDLINE			 1
@@ -187,52 +187,52 @@ extern char    *Yankbuff;
 extern char     last_command;
 extern char     last_command_char;
 
-extern char    *strcpy();
+//extern char    *strcpy();
 
 /* alloc.c */
-char  *alloc();
-char  *strsave();
+char  *alloc(unsigned);
+char  *strsave(const char *);
 void   screenalloc();
 void   filealloc();
 void   freeall();
-LINE  *newline();
-bool_t canincrease();
+LINE  *newline(int);
+bool_t canincrease(register int);
 
 /* cmdline.c */
-void   readcmdline();
-void   dotag();
-void   msg();
-void   emsg();
-void   smsg();
-void   gotocmdline();
+void   readcmdline(char, char *);
+void   dotag(char *, bool_t);
+void   msg(char *);
+void   emsg(char *);
+void   smsg(const char *fmt, ...);
+void   gotocmdline(bool_t, char);
 void   wait_return();
 
 /* dec.c */
-int    dec();
+int    dec(register LPtr  *);
 
 /* edit.c */
 void   edit();
-void   insertchar();
-void   getout();
-void   scrollup();
-void   scrolldown();
-void   beginline();
+void   insertchar(char);
+void   getout(int);
+void   scrollup(int);
+void   scrolldown(int);
+void   beginline(bool_t);
 bool_t oneright();
 bool_t oneleft();
-bool_t oneup();
-bool_t onedown();
+bool_t oneup(register int);
+bool_t onedown(register int);
 
 /* fileio.c */
-void   filemess();
+void   filemess(char *);
 void   renum();
-bool_t readfile();
-bool_t writeit();
+bool_t readfile(const char *, LPtr *fromp, bool_t);
+bool_t writeit(char *, LPtr *, LPtr *);
 
 /* s_io.c */
 void   s_cursor_off();
 void   s_cursor_on();
 void   s_clear();
-void   s_refresh();
+void   s_refresh(int);
 void   NotValidFromCurschar();
 void   Update_Botchar();
 
@@ -240,78 +240,78 @@ void   Update_Botchar();
 bool_t help();
 
 /* inc.c */
-int    inc();
+int    inc(register LPtr *);
 
 /* linefunc.c */
-LPtr  *nextline();
-LPtr  *prevline();
-void   coladvance();
+LPtr  *nextline(LPtr *);
+LPtr  *prevline(LPtr *);
+void   coladvance(register LPtr*, register int);
 
 /* main.c */
-void   stuffReadbuff();
-void   stuffnumReadbuff();
+void   stuffReadbuff(char *);
+void   stuffnumReadbuff(int);
 char   vgetc();
 char   vpeekc();
 
 /* mark.c */
 void   setpcmark();
 void   clrall();
-void   clrmark();
-bool_t setmark();
-LPtr  *getmark();
+void   clrmark(LINE *);
+bool_t setmark(char);
+LPtr  *getmark(char);
 
 /* misccmds.c */
-bool_t OpenForward();
-bool_t OpenBackward();
+bool_t OpenForward(int);
+bool_t OpenBackward(int);
 void   fileinfo();
-void   inschar();
-void   insstr();
-void   delline();
-bool_t delchar();
-int    cntllines();
-int    plines();
-LPtr  *gotoline();
+void   inschar(char);
+void   insstr(register char *);
+void   delline(int);
+bool_t delchar(bool_t, bool_t);
+int    cntllines(LPtr *, LPtr *);
+int    plines(register char *);
+LPtr  *gotoline(int);
 
 /* normal.c */
-void   normal();
+void   normal(int);
 void   ResetBuffers();
-void   AppendToInsbuff();
-void   AppendToRedobuff();
-void   AppendNumberToRedobuff();
-void   AppendToUndobuff();
-void   AppendNumberToUndobuff();
-void   AppendPositionToUndobuff();
-void   AppendToUndoUndobuff();
-void   AppendNumberToUndoUndobuff();
-void   AppendPositionToUndoUndobuff();
-bool_t linewhite();
+void   AppendToInsbuff(char *);
+void   AppendToRedobuff(char *);
+void   AppendNumberToRedobuff(int);
+void   AppendToUndobuff(char *);
+void   AppendNumberToUndobuff(int);
+void   AppendPositionToUndobuff(int, int);
+void   AppendToUndoUndobuff(char *);
+void   AppendNumberToUndoUndobuff(int);
+void   AppendPositionToUndoUndobuff(int, int);
+bool_t linewhite(LPtr *);
 
 /* mk.c */
-char  *mkstr();
-char  *mkline();
+char  *mkstr(char);
+char  *mkline(int);
 
 /* param.c */
-void   doset();
+void   doset(char *, bool_t);
 
 /* screen.c */
-void   cursupdate();
+void   cursupdate(int);
 
 /* search.c */
-void   doglob();
-void   dosub();
-void   searchagain();
-bool_t dosearch();
-bool_t repsearch();
-bool_t searchc();
-bool_t crepsearch();
-bool_t findfunc();
+void   doglob(LPtr *, LPtr *, char *);
+void   dosub(LPtr *, LPtr *, char*);
+void   searchagain(int);
+bool_t dosearch(int, char *);
+bool_t repsearch(bool_t);
+bool_t searchc(char, int, int);
+bool_t crepsearch(int);
+bool_t findfunc(int);
 LPtr  *showmatch();
-LPtr  *fwd_word();
-LPtr  *bck_word();
-LPtr  *end_word();
+LPtr  *fwd_word(LPtr *, int);
+LPtr  *bck_word(LPtr *, int);
+LPtr  *end_word(LPtr *, int);
 
 /* format_l.c */
-char *format_line();
+char *format_line(register char  *, int *);
 
 /*
  * Machine-dependent routines. 

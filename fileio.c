@@ -7,19 +7,17 @@
  */
 
 #include "stevie.h"
+#include <stdio.h>
 
-void
-filemess(s)
-    char           *s;
-{
+FILE *fopenb(const char *filename, const char *mode);
+
+void filemess(char *s) {
     sprintf(IObuff, "\"%s\" %s", ((Filename == NULL) ? "" : Filename), s);
     msg(IObuff);
 }
 
-void
-renum()
-{
-    LPtr           *p;
+void renum() {
+    LPtr *p;
     unsigned long   l = 0;
 
     for (p = Filemem; p != NULL; p = nextline(p), l += LINEINC)
@@ -32,13 +30,8 @@ renum()
 overlay "fileio"
 #endif
 
-bool_t
-readfile(fname, fromp, nochangename)
-    char           *fname;
-    LPtr           *fromp;
-    bool_t          nochangename;	/* if TRUE, don't change the Filename */
-{
-    FILE           *f, *fopen();
+bool_t readfile(const char *fname, LPtr *fromp, bool_t nochangename/* if TRUE, don't change the Filename */) {
+    FILE           *f;
     LINE           *curr;
     char            buf2[80];
     int             c;
@@ -178,14 +171,8 @@ readfile(fname, fromp, nochangename)
  * If either 'start' or 'end' contain null line pointers, the default is to use
  * the start or end of the file respectively. 
  */
-bool_t
-writeit(fname, start, end)
-    char           *fname;
-    LPtr           *start, *end;
-{
+bool_t writeit(char *fname, LPtr *start, LPtr *end) {
     FILE           *f;
-    FILE           *fopen();
-    FILE           *fopenb();	/* open in binary mode, where needed */
     char           *s;
     long            nchars;
     int             lines;

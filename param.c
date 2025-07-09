@@ -37,13 +37,9 @@ struct param    params[] = {
 			    {"", "", 0, 0}	/* end marker */
 };
 
-static void     showparms();
+static void showparms(bool_t);
 
-void
-doset(arg, inter)
-    char           *arg;	/* parameter string */
-    bool_t          inter;	/* TRUE if called interactively */
-{
+void doset(char *arg, bool_t inter) {
     int             i;
     char           *s;
     bool_t          did_lines = FALSE;
@@ -136,10 +132,7 @@ doset(arg, inter)
 	doset(arg, TRUE);	/* recurse on next parameter, if present */
 }
 
-static void
-showparms(all)
-    bool_t          all;	/* show ALL parameters */
-{
+static void showparms(bool_t all) {
     struct param   *p;
     char            buf[64];
 

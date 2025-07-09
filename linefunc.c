@@ -15,19 +15,17 @@
  * by 'curr'. Return NULL if there is no next line (at EOF). 
  */
 
-LPtr           *
-nextline(curr)
-    LPtr           *curr;
-{
-    static LPtr     next;
+LPtr* nextline(LPtr *curr) {
+    static LPtr next;
 
     if (curr != NULL) {
-	if (curr->linep->next != Fileend->linep) {
-	    next.index = 0;
-	    next.linep = curr->linep->next;
-	    return &next;
-	}
+		if (curr->linep->next != Fileend->linep) {
+			next.index = 0;
+			next.linep = curr->linep->next;
+			return &next;
+		}
     }
+	
     return (LPtr *) NULL;
 }
 
@@ -39,8 +37,7 @@ nextline(curr)
  */
 
 LPtr           *
-prevline(curr)
-    LPtr           *curr;
+prevline(LPtr *curr)
 {
     static LPtr     prev;
 
@@ -61,9 +58,7 @@ prevline(curr)
  */
 
 void
-coladvance(p, want_col)
-    register LPtr  *p;
-    register int    want_col;
+coladvance(register LPtr *p, register int want_col)
 {
     register char   c;
     register int    col;
